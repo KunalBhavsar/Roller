@@ -1,0 +1,62 @@
+package info.androidhive.src.web.entities;
+
+import info.androidhive.src.domain.RSDatetime;
+
+import java.io.Serializable;
+
+public class WeDatetime implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int year;
+	private int month;
+	private int day;
+	private int start_hr;
+	private int start_min;
+	private int end_hr;
+	private int end_min;
+
+	public int getYear() {
+		return year;
+	}
+	public int getMonth() {
+		return month;
+	}
+	public int getDay() {
+		return day;
+	}
+	public int getStart_hr() {
+		return start_hr;
+	}
+	public int getStart_min() {
+		return start_min;
+	}
+	public int getEnd_hr() {
+		return end_hr;
+	}
+	public int getEnd_min() {
+		return end_min;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}
+	public void setMonth(int month) {
+		this.month = month;
+	}
+	public void setDay(int day) {
+		this.day = day;
+	}
+	public void setStart_hr(int start_hr) {
+		this.start_hr = start_hr;
+	}
+	public void setStart_min(int start_min) {
+		this.start_min = start_min;
+	}
+	public void setEnd_hr(int end_hr) {
+		this.end_hr = end_hr;
+	}
+	public void setEnd_min(int end_min) {
+		this.end_min = end_min;
+	}
+}

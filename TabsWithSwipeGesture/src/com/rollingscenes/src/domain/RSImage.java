@@ -1,0 +1,39 @@
+package com.rollingscenes.src.domain;
+
+public class RSImage {
+	
+	private String localImagePath;
+	private String serverImagePath;
+	private boolean primary;
+	
+	public RSImage(String localImagePath, String serverImagePath, boolean primary) {
+		super();
+		this.localImagePath = localImagePath;
+		this.primary = primary;
+		this.serverImagePath = serverImagePath;
+	}
+
+	public String getLocalImagePath() {
+		return localImagePath;
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setLocalImagePath(String localImagePath) {
+		this.localImagePath = localImagePath;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+
+	public String getServerImagePath() {
+		return serverImagePath;
+	}
+
+	public void setServerImagePath(String serverImagePath) {
+		this.serverImagePath = serverImagePath;
+	}
+}

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.rollingscenes"
+    android:versionCode="1"
+    android:versionName="1.1.1" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="22" />
+
+    <permission
+        android:name="com.rollingscenes.src.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.rollingscenes.src.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!--
+     The following two permissions are not required to use
+     Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:name=".src.MyAppApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_launcher3"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Orangetab" >
+        <activity
+            android:name=".src.SplashScreen"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".src.SocialLoginActivity"
+            android:icon="@drawable/ic_launcher"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name="com.facebook.LoginActivity" />
+        <activity
+            android:name=".src.EventListActivity"
+            android:icon="@drawable/ic_launcher"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".src.EventDescActivity"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/child_page"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".src.SearchEventsActivity"
+            android:icon="@drawable/ic_launcher"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".src.EventsByCategoryActivity"
+            android:icon="@drawable/ic_launcher"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".src.CrashDisplayActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"
+            android:windowIsFloating="true" >
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/GOOGLE_API_KEY_PRODUCTION" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/GOOGLE_API_KEY_NORMAL" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/FACEBOOK_APP_ID" />
+        <meta-data
+            android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
+
+        <uses-library android:name="com.google.android.maps" />
+
+        <service
+            android:name=".src.services.RSAppService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".src.receivers.RSAppReceiver"
+            android:exported="false" />
+    </application>
+
+</manifest>

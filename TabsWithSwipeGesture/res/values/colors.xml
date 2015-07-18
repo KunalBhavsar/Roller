@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="cyan">#008287</color>
+    <color name="orange">#ff7700</color>
+    <color name="green">#5aa519</color>
+    <color name="gray">#333333</color>
+    <color name="medium_gray">#666666</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="blue">#10668f</color>
+    <color name="yellow">#ffc708</color>
+    <color name="transparent">#00aaaaaa</color>
+    <color name="shadow_color">#e2e2e2</color>
+
+    <!-- grays -->
+
+    <color name="white_fdfdfd">#fdfdfd</color>
+    <color name="white_e2e2e2">#e2e2e2</color>
+    <color name="white_f4f4f4">#f4f4f4</color>
+    <color name="white_f5f5f5">#f5f5f5</color>
+    <color name="grey_bababa">#bababa</color>
+    <color name="grey_e7e7e7">#e7e7e7</color>
+    <color name="grey_666">#666</color>
+    <color name="grey_dadada">#dadada</color>
+    <color name="grey_aeaeae">#aeaeae</color>
+    <color name="grey_777">#777</color>
+    <color name="grey_555">#555</color>
+    <color name="grey_999">#999</color>
+    <color name="grey_999999">#999999</color>
+    <color name="green_34a8a1">#34a8a1</color>
+    <color name="grey_ececec">#ececec</color>
+	
+    <!-- grays -->
+    <color name="gray_333333">#333333</color>
+    <color name="gray_777777">#777777</color>
+    <color name="gray_999999">#999999</color>
+    <color name="gray_bdbdbd">#bdbdbd</color>
+    <color name="gray_dadada">#dadada</color>
+    <color name="gray_e6e6e6">#e6e6e6</color>
+    <color name="gray_ebebeb">#ebebeb</color>
+    <color name="gray_f8f8f8">#f8f8f8</color>
+    <color name="black_000000">#000000</color>
+    
+    <color name="light_blue">#9f9fff</color>
+    <color name="light_gray">#dadada</color>
+    <color name="dark_gray">#777777</color>
+    <color name="light_chocklate">#545438</color>
+    <color name="dark_devider">#eef0f1</color>
+    <color name="light_devider">#f4f5f6</color>
+    <color name="action_bar">#3399ff</color>
+    <color name="list_view_background">#e0ebc2</color>
+	<color name="white_transperent_66">#88ffffff</color>
+	<color name="black_transperent_66">#66000000</color>
+	<color name="black_transperent_88">#88000000</color>
+	<color name="blue_app_color">#5e35b1</color>
+	
+	<!-- Category wise colors -->
+	<color name="food_drinks">#fc5b3f</color>
+    <color name="comedy">#fcb03c</color>
+    <color name="music">#ff1939</color>
+    <color name="outdoor">#52a5d9</color>
+    <color name="night_life">#bb2326</color>
+    <color name="happy_hours">#d7184e</color>
+    <color name="culture">#56bf66</color>
+    <color name="theater">#5ee3f2</color>
+    
+    <color name="red">#ff0000</color>
+	
+</resources>

@@ -1,0 +1,39 @@
+package com.rollingscenes.src.utils;
+
+import android.content.Context;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+/**
+ * This class used to check Internet connection status 
+ * @author Neebal Technologies
+ */
+public class ConnectionDetectorUtils {
+
+	private Context _context;
+	public ConnectionDetectorUtils(Context context) {
+		this._context = context;
+	}
+
+	/**
+	 * Check the Internet connectivity of device
+	 * @return true if device is connected to Internet else false
+	 */
+	public boolean isConnectedToInternet() {
+		ConnectivityManager connectivity = (ConnectivityManager) _context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (connectivity != null) {
+			NetworkInfo[] info = connectivity.getAllNetworkInfo();
+			if (info != null){
+				for (int i = 0; i < info.length; i++) {
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+}
+

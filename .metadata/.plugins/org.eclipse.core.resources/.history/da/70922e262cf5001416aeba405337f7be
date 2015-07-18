@@ -1,0 +1,289 @@
+package info.androidhive.src;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.rollingscenes.slider.library.SliderLayout;
+import com.rollingscenes.slider.library.SliderTypes.BaseSliderView;
+import com.rollingscenes.slider.library.SliderTypes.TextSliderView;
+import com.rollingscenes.src.domain.RSEvent;
+import com.rollingscenes.src.domain.RSImage;
+import com.rollingscenes.src.utils.KeyConstants;
+
+
+
+public class EventDescActivity extends FragmentActivity implements BaseSliderView.OnSliderClickListener {
+	
+	private static final String TAG = EventDescActivity.class.getSimpleName();
+	private static final String THIS_ACTIVITY = "Event Description Activity";
+	private RSEvent eventSelected;
+	private GoogleMap map;
+	private Typeface helveticaLight;
+	
+	@SuppressWarnings("deprecation")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_event_desc);
+        
+		// Remove the action bar
+		getActionBar().hide();
+        
+		eventSelected = MyAppApplication.getTransientEventFromEventListToEventDesc();
+		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		
+		if(eventSelected == null) {
+			finish();
+			return;
+		}
+		else {
+			MyAppApplication.setTransientEventFromEventListToEventDesc(null);
+		}
+		
+		SliderLayout mDemoSlider = (SliderLayout)findViewById(R.id.slider);
+
+        for(RSImage image : eventSelected.getImage()) {
+            TextSliderView textSliderView = new TextSliderView(this);
+
+            // initialize a SliderLayout
+            textSliderView.description(eventSelected.getEvent_name()).image(KeyConstants.BASE_URL + image.getImage_path().replace(" ", "%20"))
+            .setScaleType(BaseSliderView.ScaleType.Fit).setOnSliderClickListener(EventDescActivity.this);
+
+
+            //add your extra information
+            textSliderView.getBundle().putString("extra",eventSelected.getEvent_name());
+
+            mDemoSlider.addSlider(textSliderView);
+        }
+        
+        mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
+        mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Top);
+       
+        
+		helveticaLight = Typeface.createFromAsset(getAssets(),"fonts/helvetica_light.otf");
+		Typeface helveticaRoman = Typeface.createFromAsset(getAssets(),"fonts/helvetica_roman.otf");
+		Typeface helveticaBold = Typeface.createFromAsset(getAssets(),"fonts/helvetica_bold.otf");
+		
+		TextView addTitle = (TextView)findViewById(R.id.txt_add_title);
+		addTitle.setTypeface(helveticaBold);
+		
+		((TextView)findViewById(R.id.txt_add_synopsis)).setTypeface(helveticaRoman);
+		((TextView)findViewById(R.id.txt_add_category)).setTypeface(helveticaRoman);
+		((TextView)findViewById(R.id.txt_add_cost)).setTypeface(helveticaRoman);
+		((TextView)findViewById(R.id.txt_add_venue)).setTypeface(helveticaRoman);
+		
+		TextView addVenue = (TextView)findViewById(R.id.txt_add_venue_name);
+		addVenue.setTypeface(helveticaLight);
+		TextView addDesc = (TextView)findViewById(R.id.txt_add_synopsis_detail);
+		addDesc.setTypeface(helveticaLight);
+		TextView addCost = (TextView)findViewById(R.id.txt_add_cost_value);
+		addCost.setTypeface(helveticaLight);
+		TextView addCategory = (TextView)findViewById(R.id.txt_add_category_name);
+		addCategory.setTypeface(helveticaLight);
+		
+        addTitle.setText(eventSelected.getEvent_name());
+		addVenue.setText(eventSelected.getVenue_name());
+		addDesc.setText(eventSelected.getEvent_overview());
+		addCategory.setText(eventSelected.getCategory_name());
+		addCost.setText("₹ "+eventSelected.getEvent_cost());
+		
+		Log.i(TAG, "Event category :"+eventSelected.getCategory_name());
+		
+		ArrayList<String> dates = new ArrayList<>(); 
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		SimpleDateFormat formatterForDisplay = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
+		
+		Calendar cal = Calendar.getInstance();
+		Date today = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		Date tomorrow = null;
+		if(cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+			if(cal.get(Calendar.MONTH) == cal.getActualMaximum(Calendar.MONTH)) {
+				tomorrow = new Date(cal.get(Calendar.YEAR)-1900+1, 0, 1);
+			}
+			else {
+				tomorrow = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH)+1, 1);
+			}
+		}
+		else {
+			tomorrow = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)+1);
+		}
+		
+		for(int i = 0; i < eventSelected.getDatetime().length; i++) {
+			Date date = null;
+			try {
+				date = formatter.parse(eventSelected.getDatetime()[i].toString());
+			} 
+			catch (ParseException e) {
+				Log.e(TAG, e.getMessage());
+			}
+			
+			if(date.equals(today)){
+				dates.add(KeyConstants.TODAY);
+			}
+			else if(date.equals(tomorrow)) {
+				dates.add(KeyConstants.TOMORROW);
+			}
+			else {
+				dates.add(formatterForDisplay.format(date));
+			}
+		}
+		
+		TimesAdapter timesAdapter = new TimesAdapter(dates);
+		TwoWayView listView = (TwoWayView) findViewById(R.id.lst_time_items);
+		listView.setAdapter(timesAdapter);
+		
+		int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+
+        // Showing status
+        if(status != ConnectionResult.SUCCESS){ // Google Play Services are not available
+
+            int requestCode = 10;
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
+            dialog.show();
+
+        }
+        else { // Google Play Services are available
+        	new GetLocationFromAddress(getApplicationContext()).execute(eventSelected.getEvent_location());
+        }
+
+		MyAppApplication.sendTrackerAndEventInfo(getApplicationContext(), THIS_ACTIVITY, eventSelected.getCategory_name(), eventSelected.getEvent_name());
+    }
+	
+	private class TimesAdapter extends BaseAdapter {
+		private ArrayList<String> dates;
+		
+		class AdapterViewholder {
+			TextView txtDay;
+			TextView txtTime;
+		}
+		
+		public TimesAdapter(ArrayList<String> dates) {
+			this.dates = dates;
+		}
+		
+		@Override
+		public int getCount() {
+			return dates.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return dates.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			AdapterViewholder viewHolder;
+			if(convertView == null) {
+				convertView = LayoutInflater.from(EventDescActivity.this).inflate(R.layout.list_item_time, null);
+				viewHolder = new AdapterViewholder();
+				viewHolder.txtDay = (TextView)convertView.findViewById(R.id.txt_day);
+				viewHolder.txtTime = (TextView)convertView.findViewById(R.id.txt_time);
+				convertView.setTag(viewHolder);
+			}
+			else {
+				viewHolder = (AdapterViewholder)convertView.getTag();
+			}
+			
+			String time = (String)getItem(position);
+			viewHolder.txtDay.setText(time);
+			viewHolder.txtDay.setTypeface(helveticaLight);
+			viewHolder.txtTime.setText("");
+			viewHolder.txtTime.setTypeface(helveticaLight);
+			return convertView;
+		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+			default :
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+    @Override
+    public void onSliderClick(BaseSliderView slider) {
+        Toast.makeText(this,slider.getBundle().get("extra") + "",Toast.LENGTH_SHORT).show();
+    }
+    
+    	
+	class GetLocationFromAddress extends AsyncTask<String, Void, LatLng> {
+		Geocoder geocoder;
+		
+		public GetLocationFromAddress(Context context) {
+			 geocoder = new Geocoder(context, Locale.getDefault());
+         	((RelativeLayout)findViewById(R.id.rel_map)).setVisibility(View.GONE);
+		}
+		
+		@Override
+		protected LatLng doInBackground(String... params) {
+			LatLng latLng = null;
+			try {
+				List<Address> geoResults = geocoder.getFromLocationName(params[0], 1);
+				while (geoResults.size()==0) {
+			        geoResults = geocoder.getFromLocationName(params[0], 1);
+			    }
+			    if (geoResults.size()>0) {
+			        Address addr = geoResults.get(0);
+			        latLng = new LatLng(addr.getLatitude(), addr.getLongitude());
+			    }
+			    else {
+					Log.e(TAG, "No result for :"+params[0]);
+			    }
+			}
+			catch (IOException e) {
+				Log.e(TAG, "Unable connect to Geocoder :", e);
+			} 
+			return latLng;
+		}
+		
+		@Override
+		protected void onPostExecute(LatLng result) {
+			if(result != null) {
+				map.addMarker(new MarkerOptions().position(result));
+	            if(map != null){
+	             	((RelativeLayout)findViewById(R.id.rel_map)).setVisibility(View.VISIBLE);
+					map.getUiSettings().setRotateGesturesEnabled(true);
+					map.getUiSettings().setZoomControlsEnabled(true);
+					map.getUiSettings().setScrollGesturesEnabled(true);
+					map.getUiSettings().setZoomGesturesEnabled(true);
+	                map.animateCamera(CameraUpdateFactory.newLatLngZoom(result, 16.0f));
+	            }
+			}
+		}
+	}
+	
+	
+}
+

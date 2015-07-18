@@ -1,0 +1,283 @@
+/**
+ * 
+ */
+
+package info.androidhive.src.db;
+
+import info.androidhive.src.domain.RSEvent;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.neebal.lightning.domain.AssignedToTaskerIds;
+import com.neebal.lightning.domain.FriendRequest;
+import com.neebal.lightning.domain.Media;
+import com.neebal.lightning.domain.Tag;
+import com.neebal.lightning.domain.TagJoinRequest;
+import com.neebal.lightning.domain.Task;
+import com.neebal.lightning.domain.Task2;
+import com.neebal.lightning.domain.TaskRequest;
+import com.neebal.lightning.domain.TaskSchedule;
+import com.neebal.lightning.domain.Tasker;
+import com.neebal.lightning.domain.TaskerFriend;
+import com.neebal.lightning.domain.TaskerTagRel;
+import com.neebal.lightning.domain.TimeBasedReminder;
+import com.neebal.lightning.util.CalendarUtil.CalendarItem;
+import com.neebal.lightning.util.DateUtil;
+import com.neebal.lightning.util.KeyConstants;
+import com.neebal.lightning.util.StringUtil;
+
+/**
+ * SQLiteHelper class used to iteract with local database
+ * @author Neebal Technologies
+ */
+public class RSAppDbHelper extends SQLiteOpenHelper {
+	private static final String DB_NAME = "TaskManagementAppDb.sqlite";
+	private static final int DB_VERSION = 1;
+
+	private static final String KEY_ID = "rowid";
+
+	private static final String TABLE_EVENTS = "events";
+
+	private static final String KEY_REMOTE_EVENT_ID = "remote_event_id";
+	private static final String KEY_EVENT_CATEGORY_NAME = "category_name";
+	private static final String KEY_EVENT_AREA = "area";
+	private static final String KEY_EVENT_CITY = "city";
+	private static final String KEY_EVENT_COST = "cost";
+	private static final String KEY_EVENT_LOCATION = "location";
+	private static final String KEY_EVENT_NAME = "name";
+	private static final String KEY_EVENT_OVERVIEW = "overview";
+	private static final String KEY_EVENT_VENUE = "venue";
+	private static final String KEY_EVENT_VERSION = "version";
+
+	private static final String CREATE_TABLE_EVENTS = "create table "
+			+ TABLE_EVENTS + "(" 
+			+ KEY_REMOTE_EVENT_ID + " integer not null,"
+			+ KEY_EVENT_CATEGORY_NAME + " text not null," 
+			+ KEY_EVENT_AREA + " text not null," 
+			+ KEY_EVENT_CITY + " text not null,"
+			+ KEY_EVENT_COST + " text not null,"
+			+ KEY_EVENT_LOCATION + " text not null,"
+			+ KEY_EVENT_NAME + " text not null,"
+			+ KEY_EVENT_OVERVIEW + " text not null,"
+			+ KEY_EVENT_VENUE + " text not null," 
+			+ KEY_EVENT_VERSION + " integer not null" 
+			+ ");";
+	
+	private static final String TABLE_DATETIMES = "datetimes";
+
+	private static final String KEY_EVENT_START_TIME = "start_time";
+	private static final String KEY_EVENT_END_TIME = "end_time";
+	
+	private static final String CREATE_TABLE_DATETIMES = "create table "
+			+ TABLE_DATETIMES + "(" 
+			+ KEY_REMOTE_EVENT_ID + " integer not null,"
+			+ KEY_EVENT_START_TIME + " integer not null," 
+			+ KEY_EVENT_END_TIME + " integer not null,"
+			+ "FOREIGN KEY(" + KEY_REMOTE_EVENT_ID + ") REFERENCES "
+			+ TABLE_EVENTS + "(" + KEY_REMOTE_EVENT_ID + "),"
+
+			+ ");";
+	
+	private SQLiteDatabase db;
+
+	private static RSAppDbHelper rSAppDbHelper;
+
+	public synchronized static RSAppDbHelper getInstance(
+			Context context) {
+		if (rSAppDbHelper == null) {
+			rSAppDbHelper = new RSAppDbHelper(context);
+		}
+		return rSAppDbHelper;
+	}
+
+	private RSAppDbHelper(Context context) {
+		super(context, DB_NAME, null, DB_VERSION);
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(CREATE_TABLE_EVENTS);
+		db.execSQL(CREATE_TABLE_DATETIMES);
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+	}
+	
+	/**
+	 * Open database for read.
+	 */
+	public void openForRead() {
+		db = getReadableDatabase();
+	}
+	
+	/**
+	 * Open database for write.
+	 */
+	public void openForWrite() {
+		db = getWritableDatabase();
+	}
+	
+	/**
+	 * Open database in transaction mode.
+	 */
+	public synchronized void startTransaction() {
+		db = getWritableDatabase();
+		db.beginTransaction();
+	}
+	
+	/**
+	 * Commit the changes to database made till now in transaction mode.
+	 */
+	public synchronized void commitTransaction() {
+		db.setTransactionSuccessful();
+	}
+	
+	/**
+	 * End the transactions currently going on database.
+	 */
+	public synchronized void endTransaction() {
+		db.endTransaction();
+	}
+		
+	/**
+	 * Insert event into event table
+	 * @param remoteEventId : remote media id
+	 * @param area 
+	 * @param city
+	 * @param cost
+	 * @param location
+	 * @param name
+	 * @param overview
+	 * @param venue
+	 * @param version
+	 * @return boolean indicating event is inserted into event table or not
+	 */
+	public synchronized boolean insertEvent(RSEvent event) {
+		openForWrite();
+		
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(KEY_REMOTE_EVENT_ID, event.get);
+		contentValues.put(KEY_EVENT_CATEGORY_NAME, remoteEventId);
+		contentValues.put(KEY_EVENT_AREA, remoteEventId);
+		contentValues.put(KEY_EVENT_CITY, remoteEventId);
+		contentValues.put(KEY_EVENT_COST, remoteEventId);
+		contentValues.put(KEY_EVENT_LOCATION, remoteEventId);
+		contentValues.put(KEY_EVENT_NAME, remoteEventId);
+		contentValues.put(KEY_EVENT_OVERVIEW, remoteEventId);
+		contentValues.put(KEY_EVENT_VENUE, remoteEventId);
+		contentValues.put(KEY_EVENT_VERSION, remoteEventId);
+
+		return db.insert(TABLE_EVENTS, null, contentValues) >= 0;
+	}
+	
+	/**
+	 * Return the todays events from events stored in local storage.
+	 * @return : return the list of events
+	 */
+	public synchronized String getTodaysEvents() {
+		String sql = "SELECT "+TABLE_EVENTS+"."+KEY_EV+" FROM "+ TABLE_TASKERS +" INNER JOIN "+TABLE_MEDIAS+" ON "+TABLE_TASKERS+"."+KEY_ORIGINAL_MEDIA_ID+"="+TABLE_MEDIAS+"."+KEY_REMOTE_MEDIA_ID
+				+" AND " + TABLE_TASKERS+"."+KEY_REMOTE_PROFILE_ID + " = ?";
+		String[] selectionArgs = {"" + taskerRemoteId};
+
+		openForRead();
+		
+		Cursor cursor = db.rawQuery(sql, selectionArgs);
+		
+		String path = null;
+		if (cursor.moveToNext()) {
+			path = cursor.getString(cursor
+					.getColumnIndex(KEY_LOCAL_MEDIA_PATH));
+		} 
+		cursor.close();
+		return path;
+	}
+	
+	/**
+	 * Return the local storage media path of tasker profile from remote media id of tasker profile image.
+	 * @param remoteMediaId : remote media id of tasker profile image.
+	 * @return : return the string of local storage path of media if present else return null
+	 */
+	public synchronized String getLocalMediaPathOfTaskerProfileFromRemoteMediaId(long remoteMediaId) {
+		String sql = "SELECT "+TABLE_MEDIAS+"."+KEY_LOCAL_MEDIA_PATH+" FROM "+TABLE_MEDIAS
+				+" WHERE "+TABLE_MEDIAS+"."+KEY_REMOTE_MEDIA_ID + " = ?";
+		String[] selectionArgs = {"" + remoteMediaId};
+
+		openForRead();
+		
+		Cursor cursor = db.rawQuery(sql, selectionArgs);
+		
+		String path = null;
+		if (cursor.moveToNext()) {
+			path = cursor.getString(cursor
+					.getColumnIndex(KEY_LOCAL_MEDIA_PATH));
+			cursor.close();
+		} 
+		return path;
+	}
+	
+	/**
+	 * Update media version
+	 * @param remoteMediaId : media id of media whose version supposed to be changed
+	 * @param version : new version of media
+	 * @return : return true if successfully updated else return false.
+	 */
+	public synchronized boolean updateMedia(long remoteMediaId, int version)
+	{
+		openForWrite();
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(KEY_VERSION, version);
+		String whereClause = KEY_REMOTE_MEDIA_ID + "=?";
+		String[] whereArgs = {remoteMediaId + ""};
+		boolean returnValue = db.update(TABLE_MEDIAS, contentValues, whereClause,
+					whereArgs) >= 0;
+		
+		return returnValue;
+	}
+	
+	/**
+	 * Delete media from local database having same remote media id as provided media id
+	 * @param mediaRemoteId : remote id of media
+	 */
+	public synchronized void deleteMedia(long mediaRemoteId) {
+		openForWrite();
+		
+		//load the taskers from tag join request table
+		String sql = "SELECT "+TABLE_TASKERS+"."+KEY_REMOTE_PROFILE_ID
+				+ " FROM "+TABLE_TASKERS+" INNER JOIN "+TABLE_MEDIAS
+				+" ON "+TABLE_TASKERS+"."+KEY_ORIGINAL_MEDIA_ID+" = "+TABLE_MEDIAS+"."+KEY_REMOTE_MEDIA_ID
+				+" AND "+TABLE_MEDIAS+"."+KEY_REMOTE_MEDIA_ID+" = ?"
+				;
+		String[] selectionArgs = {""+mediaRemoteId};
+		Cursor cursor = db.rawQuery(sql, selectionArgs);
+		long taskerRemoteId = 0;
+		while (cursor.moveToNext()) {
+			taskerRemoteId = cursor.getLong(cursor
+					.getColumnIndex(KEY_REMOTE_PROFILE_ID));
+		}
+		cursor.close();
+		if(taskerRemoteId!= 0 ) {
+			removeMediaOfTasker(taskerRemoteId);
+		}
+	}
+	
+	public synchronized void truncateAllTables()
+	{
+		openForWrite();
+		String whereClause = "1";
+		String TAG = "DBHelper";
+		Log.e(TAG, ""+db.delete(TABLE_EVENTS, whereClause, null));
+	}
+	
+}

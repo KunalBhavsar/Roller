@@ -1,0 +1,10 @@
+INDEX VERSION 1.126+/root/Desktop/Android Practs/ExtraWork/ExtraMonks/.metadata/.plugins/org.eclipse.jdt.core
+554405790.index
+3762321727.index
+1270315800.index
+538553373.index
+1613636577.index
+144581946.index
+1480718861.index
+3607788835.index
+1145033038.index

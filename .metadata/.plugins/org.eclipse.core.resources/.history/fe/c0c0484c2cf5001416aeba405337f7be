@@ -1,0 +1,208 @@
+package info.androidhive.src.adapter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.rollingscenes.src.domain.RSEvent;
+import com.rollingscenes.src.utils.KeyConstants;
+
+public class EventsAdapter extends GPlusListAdapter {
+
+	private static final String TAG = null;
+	private Typeface dsItalic;
+	private Typeface dsRegular;
+	private Typeface helveticaBold;
+	//private String[] hashtags;
+	private ArrayList<RSEvent> events;
+	private Context context;
+	private Date today;
+	private Date tomorrow;
+	private SimpleDateFormat formatterForGetDate;
+	private SimpleDateFormat formatterForDisplay;
+	
+	class AddsAdapterViewholder {
+		ImageView eventBg;
+		TextView imageLoadingText;
+		/*TextView eventHashtag1;
+		TextView eventHashtag2;
+		TextView eventHashtag3;*/
+		TextView eventName;
+		TextView eventCategory;
+		TextView veneuName;
+		TextView areaName;
+		TextView eventTime;
+		TextView eventCost;
+		View blankSpace;
+	}
+	@SuppressWarnings("deprecation")
+	public EventsAdapter(Context context, ArrayList<RSEvent> events) {
+		super(context, new SpeedScrollListener(), events);
+		this.events = events;
+		this.context = context;
+		helveticaBold = Typeface.createFromAsset(context.getAssets(),"fonts/helvetica_bold.otf");
+		dsRegular = Typeface.createFromAsset(context.getAssets(),
+				"fonts/ds_regular.ttf");
+		dsItalic = Typeface.createFromAsset(context.getAssets(),
+				"fonts/ds_bolditalic.ttf");
+		
+		formatterForGetDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		formatterForDisplay = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
+		
+		Calendar cal = Calendar.getInstance();
+		today = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		tomorrow = null;
+		if(cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+			if(cal.get(Calendar.MONTH) == cal.getActualMaximum(Calendar.MONTH)) {
+				tomorrow = new Date(cal.get(Calendar.YEAR)-1900+1, 0, 1);
+			}
+			else {
+				tomorrow = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH)+1, 1);
+			}
+		}
+		else {
+			tomorrow = new Date(cal.get(Calendar.YEAR)-1900, cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)+1);
+		}
+
+	}
+
+	@Override
+	public int getCount() {
+		return events.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return events.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@SuppressLint("InflateParams")
+	@Override
+	protected View getRowView(int position, View convertView, ViewGroup parent) {
+		final AddsAdapterViewholder viewHolder;
+		if(convertView == null) {
+			convertView = LayoutInflater.from(context).inflate(R.layout.list_item_event, null);
+			viewHolder = new AddsAdapterViewholder();
+			viewHolder.eventBg = (ImageView)convertView.findViewById(R.id.img_event_background);
+			viewHolder.imageLoadingText = (TextView)convertView.findViewById(R.id.txt_image_loading);
+			/*viewHolder.eventHashtag1 = (TextView)convertView.findViewById(R.id.txt_event_hashtag1);
+			viewHolder.eventHashtag2 = (TextView)convertView.findViewById(R.id.txt_event_hashtag2);
+			viewHolder.eventHashtag3 = (TextView)convertView.findViewById(R.id.txt_event_hashtag3);*/
+			viewHolder.eventName = (TextView)convertView.findViewById(R.id.txt_event_name);
+			viewHolder.eventCategory = (TextView)convertView.findViewById(R.id.txt_event_category);
+			viewHolder.veneuName = (TextView)convertView.findViewById(R.id.txt_venue_name);
+			viewHolder.areaName = (TextView)convertView.findViewById(R.id.txt_area_name);
+			viewHolder.eventTime = (TextView)convertView.findViewById(R.id.txt_event_time);
+			viewHolder.eventCost = (TextView)convertView.findViewById(R.id.txt_event_cost);
+			viewHolder.blankSpace = (View)convertView.findViewById(R.id.blank_space);
+			convertView.setTag(viewHolder);
+		}
+		else {
+			viewHolder = (AddsAdapterViewholder)convertView.getTag();
+		}
+		
+		RSEvent event = (RSEvent)getItem(position);
+		
+		viewHolder.imageLoadingText.setTypeface(dsRegular);
+		/*viewHolder.eventHashtag1.setTypeface(dsRegular);
+		viewHolder.eventHashtag2.setTypeface(dsRegular);
+		viewHolder.eventHashtag3.setTypeface(dsRegular);*/
+		viewHolder.eventName.setTypeface(dsItalic);
+		viewHolder.eventCategory.setTypeface(dsRegular);
+		viewHolder.veneuName.setTypeface(helveticaBold);
+		viewHolder.areaName.setTypeface(helveticaBold);
+		viewHolder.eventTime.setTypeface(dsRegular);
+		viewHolder.eventCost.setTypeface(dsRegular);
+
+		if(event.getFirstImageLocalPath() != null) {
+			viewHolder.eventBg.setImageBitmap(BitmapFactory.decodeFile(event.getFirstImageLocalPath()));
+			viewHolder.imageLoadingText.setVisibility(View.INVISIBLE);
+		}
+		else {
+			viewHolder.imageLoadingText.setVisibility(View.VISIBLE);
+			viewHolder.eventBg.setImageBitmap(null);
+		}
+		
+		/*hashtags = event.getEvent_hashtags();
+		if(hashtags != null) {
+			if(hashtags[0] != null && !hashtags[0].isEmpty()) {
+				viewHolder.eventHashtag1.setText("#"+hashtags[0]);
+			}
+			else {
+				viewHolder.eventHashtag1.setText("");
+			}
+			if(hashtags[1] != null && !hashtags[1].isEmpty()) {
+				viewHolder.eventHashtag2.setText("#"+hashtags[1]);
+			}
+			else {
+				viewHolder.eventHashtag2.setText("");
+			}
+			if(hashtags[2] != null && !hashtags[2].isEmpty()) {
+				viewHolder.eventHashtag3.setText("#"+hashtags[2]);
+			}
+			else {
+				viewHolder.eventHashtag3.setText("");
+			}
+		}*/
+		
+		if(event.getEvent_name() != null) {
+			viewHolder.eventName.setText(" " + event.getEvent_name());
+		}
+
+		if(event.getCategory_name() != null) {
+			viewHolder.eventCategory.setText(" " + event.getCategory_name()+" ");
+		}
+		
+		if(event.getVenue_name() != null) {
+			viewHolder.veneuName.setText(" " + event.getVenue_name()+",");
+		}
+		
+		if(event.getEvent_area() != null) {
+			viewHolder.areaName.setText(event.getEvent_area());
+		}
+		
+		Date date = null;
+		try {
+			date = formatterForGetDate.parse(event.getDatetime()[0].toString());
+		} 
+		catch (ParseException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
+		if(date.equals(today)){
+			viewHolder.eventTime.setText(KeyConstants.TODAY+" "+event.getDatetime()[0].getStart_time());
+		}
+		else if(date.equals(tomorrow)) {
+			viewHolder.eventTime.setText(KeyConstants.TOMORROW+" "+event.getDatetime()[0].getStart_time());
+		}
+		else {
+			viewHolder.eventTime.setText(formatterForDisplay.format(date)+" "+event.getDatetime()[0].getStart_time());
+		}
+
+		
+		if(event.getEvent_cost() != null) {
+			viewHolder.eventCost.setText("₹"+event.getEvent_cost());
+		}
+		
+		return convertView;
+	}
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- <item
+        android:id="@+id/item_search_button"
+        android:icon="@drawable/ic_search_actionbar"
+        android:showAsAction="ifRoom"
+        android:title="@string/search"/> -->
+    <item
+        android:id="@+id/item_refresh_button"
+        android:icon="@drawable/ic_popup_sync"
+        android:showAsAction="always"
+        android:title="@string/refresh"/>
+
+</menu>

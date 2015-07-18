@@ -1,0 +1,89 @@
+package info.androidhive.src.asynctasks;
+
+import info.androidhive.src.domain.RSEvent;
+import info.androidhive.src.interfaces.EventsLoaderIntf;
+import info.androidhive.src.utils.KeyConstants;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import android.os.AsyncTask;
+import android.util.Log;
+
+public class GetEvents extends AsyncTask<String, Void, ArrayList<RSEvent>> {
+
+	private static final String TAG = GetEvents.class.getSimpleName();
+	private EventsLoaderIntf eventsLoaderIntf;
+	
+	public GetEvents(EventsLoaderIntf eventsLoaderIntf) {
+		this.eventsLoaderIntf = eventsLoaderIntf;
+	}
+	
+	@Override
+	protected ArrayList<RSEvent> doInBackground(String... params) {
+		
+		Log.e(TAG, "URL: "+params[0]);
+		
+		HttpURLConnection connection = null;
+		int statusCode = 0;
+		BufferedReader reader = null;
+		ArrayList<RSEvent> events = null;
+		try {
+			URL eventsUrl = new URL(params[0]);
+
+			connection = (HttpURLConnection)eventsUrl.openConnection();
+			connection.setRequestMethod(KeyConstants.GET_REQUEST_METHOD);
+	        connection.setRequestProperty(KeyConstants.CONTENT_TYPE,KeyConstants.JSON_APPLICATION);
+	        connection.setConnectTimeout(15000);
+	        connection.setDoOutput(true);
+			statusCode = connection.getResponseCode();
+			if (statusCode == KeyConstants.GET_OK) {
+				reader = new BufferedReader(new InputStreamReader(
+						connection.getInputStream()));
+				String line = "";
+				StringBuilder sb = new StringBuilder();
+				while ((line = reader.readLine()) != null) {
+					sb.append(line);
+				}
+				String responseData = sb.toString();
+				//Log.e(TAG, responseData);
+				events = new Gson().fromJson(responseData, new TypeToken<ArrayList<RSEvent>>() {}.getType());
+			}
+			else {
+				reader = new BufferedReader(new InputStreamReader(
+						connection.getErrorStream()));
+				String line = "";
+				StringBuilder sb = new StringBuilder();
+				while ((line = reader.readLine()) != null) {
+					sb.append(line);
+				}
+				Log.e(TAG, "Error occured with status code : "+statusCode+"\n"+sb.toString());
+			}
+		} 
+		catch (MalformedURLException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
+		return events;
+	}
+	@Override
+	protected void onPostExecute(ArrayList<RSEvent> result) {
+		if(result != null) {
+			eventsLoaderIntf.eventsLoaded(result);
+		}
+		else {
+			eventsLoaderIntf.errorInLoadingEvents("Error in loading events. Please, try again later...");
+		}
+	}
+}

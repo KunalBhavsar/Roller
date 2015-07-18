@@ -1,0 +1,28 @@
+package info.androidhive.src.handlers;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+
+import android.os.Handler;
+import android.os.Process;
+
+import com.rollingscenes.src.exceptions.BackgroundException;
+
+public class UnCaughtException implements UncaughtExceptionHandler {
+
+    private Handler mHandler;
+
+    public UnCaughtException(Handler handler) {
+        mHandler = handler;
+    }
+ 
+    public void uncaughtException(Thread t,final Throwable e) {
+        
+        final int tid = Process.myTid();
+        final String threadName = t.getName();
+        mHandler.post(new Runnable() {
+            public void run() {
+                throw new BackgroundException(e, tid, threadName);
+            }
+        });
+    }
+}

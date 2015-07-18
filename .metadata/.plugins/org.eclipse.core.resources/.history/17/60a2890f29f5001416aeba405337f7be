@@ -1,0 +1,100 @@
+package info.androidhive.src;
+
+import info.androidhive.src.domain.RSEvent;
+import info.androidhive.src.handlers.UnCaughtException;
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+public class MyAppApplication extends Application {
+
+	private static final String PROPERTY_ID = "UA-61172245-1";
+	private static RSEvent transientEventFromEventListToEventDesc;
+
+	private static Tracker mTracker;
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+        startCatcher();
+	}
+
+	public static RSEvent getTransientEventFromEventListToEventDesc() {
+		return transientEventFromEventListToEventDesc;
+	}
+
+	public static void setTransientEventFromEventListToEventDesc(RSEvent event) {
+		transientEventFromEventListToEventDesc = event;
+	}
+
+	public synchronized static void sendTrackerInfo(Context context, String screenName) {
+		
+		if (mTracker == null) {
+			mTracker = GoogleAnalytics.getInstance(context).newTracker(PROPERTY_ID);
+		}
+
+		// Set screen name.
+		mTracker.setScreenName(screenName);
+
+		// Send a screen view.
+		mTracker.send(new HitBuilders.AppViewBuilder().build());
+		
+		// Clear the screen name field when we're done.
+		mTracker.setScreenName(null);
+	}
+
+	public synchronized static void sendTrackerAndEventInfo(Context context, String screenName, String eventCategory, String eventName) {
+		
+		if (mTracker == null) {
+			mTracker = GoogleAnalytics.getInstance(context).newTracker(PROPERTY_ID);
+		}
+
+		// Set screen name.
+		mTracker.setScreenName(screenName);
+
+		// Send a screen view.
+		mTracker.send(new HitBuilders.AppViewBuilder().build());
+		
+		// Build and send an Event.
+		mTracker.send(new HitBuilders.EventBuilder()
+			    .setCategory(eventCategory)
+			    .setAction("Visited")
+			    .setLabel(eventName)
+			    .build());
+		
+		// Clear the screen name field when we're done.
+        mTracker.setScreenName(null);
+	}
+	
+    private void startCatcher() {
+        while (true) {
+        	Log.i("Application", "Catcher starterd");
+            try {
+                Looper.loop();
+        		Thread.setDefaultUncaughtExceptionHandler(new UnCaughtException(new Handler()));
+                throw new RuntimeException("Main thread loop unexpectedly exited");
+            } 
+            catch (info.androidhive.src.exceptions.BackgroundException e) {
+            	Log.e("Application crash catched", e.getMessage());
+                showCrashDisplayActivity(e);
+            } 
+            catch (Throwable e) {
+                showCrashDisplayActivity(e);
+            }
+        }
+    }
+    
+    void showCrashDisplayActivity(Throwable e) {
+        Intent i = new Intent(this, info.androidhive.src.CrashDisplayActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("ErrorContent", e);
+        startActivity(i);
+    }
+}

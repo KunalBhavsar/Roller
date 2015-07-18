@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:paddingLeft="@dimen/_20dp"
+    android:paddingRight="@dimen/_20dp" >
+	
+    <TextView
+        android:id="@+id/txt_list_item"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16sp" />
+    <View
+        android:id="@+id/item_devider_of_navigation_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_ebebeb"
+        />
+    
+    
+</RelativeLayout>

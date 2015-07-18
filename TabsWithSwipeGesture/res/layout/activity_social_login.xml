@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/socialbg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_transperent_88"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/rel_app_icon"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="4" >
+
+                <ImageView
+                    android:id="@+id/img_app_icon"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_30dp"
+                    android:layout_weight="3"
+                    android:contentDescription="@string/cd_app_logo"
+                    android:src="@drawable/login_icon" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lin_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="4" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clickable="false" />
+
+                <com.facebook.widget.LoginButton
+                    android:id="@+id/btn_facebook_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/_15dp"
+                    android:layout_weight="1"
+                    facebook:confirm_logout="false"
+                    facebook:fetch_user_info="true" />
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/btn_google_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/_15dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_progress_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_transperent_88"
+        android:visibility="invisible" >
+
+        <com.todddavies.components.progressbar.ProgressWheel
+            android:id="@+id/pw_spinner"
+            android:layout_width="@dimen/_100dp"
+            android:layout_height="@dimen/_100dp"
+            android:layout_centerInParent="true"
+            ProgressWheel:barColor="#ffffff"
+            ProgressWheel:barLength="60dp"
+            ProgressWheel:barWidth="6dp"
+            ProgressWheel:rimColor="#33ffffff"
+            ProgressWheel:rimWidth="4dp"
+            ProgressWheel:text="Loading..."
+            ProgressWheel:textColor="#ffffff"
+            ProgressWheel:textSize="14sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

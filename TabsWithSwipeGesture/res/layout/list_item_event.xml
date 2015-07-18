@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <View
+        android:id="@+id/blank_space_upper"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="@android:color/white" />
+
+    <RelativeLayout
+        android:id="@+id/rel_item_event"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_350dp"
+        android:layout_below="@id/blank_space_upper" >
+
+        <ImageView
+            android:id="@+id/img_event_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_transperent_88"
+            android:contentDescription="@string/cd_app_logo"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/txt_image_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/loading"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sp" />
+
+ <!--        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/oval_black_background"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/txt_event_hashtag1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_marginRight="@dimen/_10dp"
+                android:layout_marginStart="@dimen/_10dp"
+                android:layout_marginTop="@dimen/_10dp"
+                android:layout_weight="1"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="#hashtag1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_18sp" />
+
+            <TextView
+                android:id="@+id/txt_event_hashtag2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_marginRight="@dimen/_10dp"
+                android:layout_marginStart="@dimen/_10dp"
+                android:layout_marginTop="@dimen/_10dp"
+                android:layout_weight="1"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="#hashtag2"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_18sp" />
+
+            <TextView
+                android:id="@+id/txt_event_hashtag3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_marginRight="@dimen/_10dp"
+                android:layout_marginStart="@dimen/_10dp"
+                android:layout_marginTop="@dimen/_10dp"
+                android:layout_weight="1"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="#hashtag3"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_18sp" />
+        </LinearLayout>
+ -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_130dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/oval_black_background" >
+
+            <TextView
+                android:id="@+id/txt_event_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="event_time"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sp" />
+
+            <TextView
+                android:id="@+id/txt_event_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginRight="@dimen/_10dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="event cost"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16sp" />
+
+            <ImageView
+                android:id="@+id/img_locator"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_20dp"
+                android:layout_above="@id/txt_event_time"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:src="@drawable/locator1" />
+
+            <TextView
+                android:id="@+id/txt_venue_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/txt_event_time"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_toRightOf="@id/img_locator"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="venue name"
+                android:textColor="@color/light_blue"
+                android:textSize="@dimen/_15sp" />
+
+            <TextView
+                android:id="@+id/txt_area_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/txt_event_time"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/txt_venue_name"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="area name"
+                android:textColor="@color/light_blue"
+                android:textSize="@dimen/_15sp" />
+
+            <TextView
+                android:id="@+id/txt_event_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/txt_venue_name"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:background="@drawable/oval_white_background"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="event category"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_16sp" />
+
+            <TextView
+                android:id="@+id/txt_event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/txt_event_category"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="@dimen/_10dp"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="event name"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_18sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/blank_space"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/rel_item_event"
+        android:background="@android:color/white" />
+
+</RelativeLayout>

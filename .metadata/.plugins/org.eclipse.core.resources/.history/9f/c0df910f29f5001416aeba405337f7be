@@ -1,0 +1,67 @@
+package info.androidhive.src.utils;
+
+import info.androidhive.src.domain.RSDatetime;
+import info.androidhive.src.domain.RSEvent;
+import info.androidhive.src.domain.RSImage;
+import info.androidhive.src.web.entities.WeDatetime;
+import info.androidhive.src.web.entities.WeEvent;
+import info.androidhive.src.web.entities.WeImage;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import android.os.Environment;
+
+public class WeToRS {
+	
+	public static ArrayList<RSDatetime> weToRSDatetime(WeDatetime[] weDatetime) {
+		ArrayList<RSDatetime> rsDatetimes = new ArrayList<RSDatetime>();
+		for(int i = 0; i < weDatetime.length; i++) {
+			Calendar startCal = Calendar.getInstance();
+			Calendar endCal = Calendar.getInstance();
+			startCal.set(weDatetime[i].getYear(), weDatetime[i].getMonth(), weDatetime[i].getDay());
+			endCal.set(weDatetime[i].getYear(), weDatetime[i].getMonth(), weDatetime[i].getDay());
+			startCal.set(Calendar.HOUR, weDatetime[i].getStart_hr());
+			startCal.set(Calendar.MINUTE, weDatetime[i].getStart_min());
+			endCal.set(Calendar.HOUR, weDatetime[i].getEnd_hr());
+			endCal.set(Calendar.MINUTE, weDatetime[i].getEnd_min());
+			rsDatetimes.add(new RSDatetime(startCal.getTimeInMillis(), endCal.getTimeInMillis()));
+		}
+		return rsDatetimes;
+	}
+	
+	public static ArrayList<RSImage> weToRSImage(WeImage[] weImages, long eventId) {
+		File file = new File(Environment.getExternalStorageDirectory(), KeyConstants.IMAGE_DIRECTORY);
+		if(!file.exists()) {
+			file.mkdir();
+		}
+		ArrayList<RSImage> rsImages = new ArrayList<RSImage>();
+		
+		RSImage rsImage = null;
+		WeImage weImage = null;
+		for(int i = 0; i < weImages.length; i++) {
+			weImage = weImages[i];
+			rsImage = new RSImage(file.getAbsolutePath()+File.separator+eventId+".jpeg", 
+					KeyConstants.BASE_URL+weImage.getImage_path(), weImage.isPrimary());
+			rsImages.add(rsImage);
+		}
+		return rsImages;
+	}
+	
+	public static ArrayList<String> weToRSHashtags(String[] weHashtags) {
+		ArrayList<String> rsHashtags = new ArrayList<String>();
+		for(int i = 0; i < weHashtags.length; i++) {
+			rsHashtags.add(weHashtags[i]);
+		}
+		return rsHashtags;
+	}
+	
+	public static RSEvent weToRSEvent(WeEvent weEvent) {
+		return new RSEvent(weEvent.getEvent_detail_id(), weEvent.getCategory_name(),
+				weEvent.getEvent_area(), weEvent.getEvent_city(), weEvent.getEvent_cost(),
+				weEvent.getEvent_location(), weEvent.getEvent_name(), weEvent.getEvent_overview(),
+				weEvent.getVenue_name(), weToRSImage(weEvent.getImage(), weEvent.getEvent_detail_id()),
+				weToRSHashtags(weEvent.getEvent_hashtags()), weToRSDatetime(weEvent.getDatetime()));
+	}
+}

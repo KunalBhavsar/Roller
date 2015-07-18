@@ -1,0 +1,230 @@
+package info.androidhive.src;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.rollingscenes.src.adapter.EventsAdapter;
+import com.rollingscenes.src.asynctasks.GetEvents;
+import com.rollingscenes.src.domain.RSEvent;
+import com.rollingscenes.src.interfaces.EventsLoaderIntf;
+import com.rollingscenes.src.utils.ConnectionDetectorUtils;
+import com.rollingscenes.src.utils.KeyConstants;
+
+public class EventsFragment extends Fragment implements EventsLoaderIntf {
+	private static final String SAVED_STATE_URL = null;
+	private static final String TAG = EventsFragment.class.getSimpleName();
+	private ArrayList<RSEvent> events;
+	private ListView eventList;
+	private EventsAdapter eventsAdapter;
+	private Context context;
+	private TextView txtNoEventsAvailable;
+	private String url;
+	private RelativeLayout relSpinner;
+	private ProgressWheel spinner;
+	private boolean loadingEvents;
+	
+	public EventsFragment(){}
+	
+	public EventsFragment(String url, Context context) {
+		super();
+		this.context = context;
+		this.url = url;
+		events = new ArrayList<RSEvent>();		
+		Log.i(TAG, "Events fragment constructor");
+		if(url != null) {
+			if (new ConnectionDetectorUtils(context).isConnectedToInternet()) {
+				loadingEvents = true;
+				Log.i(TAG, "calling get events for URl :"+url);
+				new GetEvents(this).execute(url);
+			}
+			else {
+				Toast.makeText(context, KeyConstants.INTERNET_CONNECTION_PROBLEM, Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
+	public void updateEvents(String url) {
+		if(url != null) {
+			if (new ConnectionDetectorUtils(context).isConnectedToInternet()) {
+				new GetEvents(this).execute(url);
+			}
+			else {
+				Toast.makeText(context, KeyConstants.INTERNET_CONNECTION_PROBLEM, Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		if(savedInstanceState != null) {
+			events = new ArrayList<RSEvent>();	
+			url = savedInstanceState.getString(SAVED_STATE_URL);
+			context = getActivity().getApplicationContext();
+			if(url != null) {
+				if (new ConnectionDetectorUtils(context).isConnectedToInternet()) {
+					new GetEvents(this).execute(url);
+				}
+				else {
+					Toast.makeText(context, KeyConstants.INTERNET_CONNECTION_PROBLEM, Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+		
+		View rootView = inflater.inflate(R.layout.fragment_event_list, container, false);
+		
+		eventList = (ListView)rootView.findViewById(R.id.lst_adds);
+		eventsAdapter = new EventsAdapter(getActivity().getApplicationContext(), events);
+		eventList.setAdapter(eventsAdapter);
+		
+		eventList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+				MyAppApplication.setTransientEventFromEventListToEventDesc(events.get(position));
+				Intent intent = new Intent(getActivity(), EventDescActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+		txtNoEventsAvailable = ((TextView)rootView.findViewById(R.id.txt_no_events));
+		
+		spinner = (ProgressWheel)rootView.findViewById(R.id.pw_spinner);
+		relSpinner = (RelativeLayout)rootView.findViewById(R.id.rel_progress_wheel);
+		if(loadingEvents) {
+			showProgressWheel();
+		}
+		
+		return rootView;
+	}
+
+	@Override
+	public void eventsLoaded(ArrayList<RSEvent> events) {
+		this.events.clear();
+		this.events.addAll(events);
+		loadingEvents = false;
+		if(eventsAdapter != null) {
+			hideProgressWheel();
+			if(events.size()==0) {
+				txtNoEventsAvailable.setVisibility(View.VISIBLE);
+			}
+			else {
+				txtNoEventsAvailable.setVisibility(View.GONE);
+			}
+			eventsAdapter.notifyDataSetChanged();
+		}
+		if(events.size() > 0) {
+			loadImagesForEvents(0);
+		}
+	}
+	
+	private void showProgressWheel() {
+		relSpinner.setVisibility(View.VISIBLE);
+		spinner.spin();
+		
+	}
+	
+	private void hideProgressWheel() {
+		spinner.stopSpinning();
+		relSpinner.setVisibility(View.INVISIBLE);
+	}
+	
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString(SAVED_STATE_URL, url);
+		super.onSaveInstanceState(outState);
+	}
+	
+	private void loadImagesForEvents(final int eventIndex) {
+		final RSEvent event = events.get(eventIndex);
+		ImageSize imageSize = new ImageSize(250, 250);
+		ImageLoader.getInstance().loadImage(KeyConstants.BASE_URL + event.getImage()[0].getImage_path().replaceAll(" ", "%20")
+				, imageSize, new ImageLoadingListener() {
+			
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+				
+			}
+			
+			@Override
+			public void onLoadingFailed(String imageUri, View view,
+					FailReason failReason) {
+			    event.setFirstImageLocalPath("");
+			    if(eventsAdapter != null) {
+					eventsAdapter.notifyDataSetChanged();
+				}
+			    if((eventIndex+1) < events.size()) {
+			    	loadImagesForEvents(eventIndex+1);
+			    }
+			}
+			
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+//				File file = new File(context.getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES), KeyConstants.IMAGE_DIRECTORY);
+				File file = new File(Environment.getExternalStorageDirectory(), KeyConstants.IMAGE_DIRECTORY);
+				if(file.exists() && file.isDirectory()) {
+					File imageFile = new File(file, Calendar.getInstance().getTimeInMillis()+".jpeg");
+					try {
+					    // Use the compress method on the Bitmap object to write image to
+					    // the OutputStream
+					    FileOutputStream fos = new FileOutputStream(imageFile);
+	
+					    // Writing the bitmap to the output stream
+					    loadedImage.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+					    fos.close();
+					    event.setFirstImageLocalPath(imageFile.getAbsolutePath());
+					    if(eventsAdapter != null) {
+							eventsAdapter.notifyDataSetChanged();
+						}
+					    if((eventIndex+1) < events.size()) {
+					    	loadImagesForEvents(eventIndex+1);
+					    }
+				    } 
+					catch (Exception e) {
+					    Log.e("Error in storing image : ", e.getMessage());
+					    event.setFirstImageLocalPath("");
+					    if(eventsAdapter != null) {
+							eventsAdapter.notifyDataSetChanged();
+						}
+					    if((eventIndex+1) < events.size()) {
+					    	loadImagesForEvents(eventIndex+1);
+					    }
+					}
+				}
+			}
+			
+			@Override
+			public void onLoadingCancelled(String imageUri, View view) {
+			    event.setFirstImageLocalPath("");
+			    if(eventsAdapter != null) {
+					eventsAdapter.notifyDataSetChanged();
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void errorInLoadingEvents(String error) {
+		Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+	}			
+}

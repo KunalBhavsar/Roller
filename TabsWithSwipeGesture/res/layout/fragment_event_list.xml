@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/lst_adds"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_333333"
+        android:divider="@null" />
+
+    <TextView
+        android:id="@+id/txt_no_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_events"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18sp"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/rel_progress_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_transperent_88"
+        android:visibility="invisible" >
+
+        <com.todddavies.components.progressbar.ProgressWheel
+            android:id="@+id/pw_spinner"
+            android:layout_width="@dimen/_100dp"
+            android:layout_height="@dimen/_100dp"
+            android:layout_centerInParent="true"
+            ProgressWheel:barColor="#ffffff"
+            ProgressWheel:barLength="60dp"
+            ProgressWheel:barWidth="6dp"
+            ProgressWheel:rimColor="#33ffffff"
+            ProgressWheel:rimWidth="4dp"
+            ProgressWheel:text="Loading..."
+            ProgressWheel:textColor="#ffffff"
+            ProgressWheel:textSize="14sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

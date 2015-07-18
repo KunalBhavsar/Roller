@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <!-- Search, should appear as action button -->
+    <item 
+        android:id="@+id/item_search_button"
+        android:title="@string/search"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_search_actionbar"
+        android:actionViewClass="android.widget.SearchView"/>
+</menu>

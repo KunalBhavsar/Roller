@@ -1,0 +1,134 @@
+package info.androidhive.src.domain;
+
+import java.util.ArrayList;
+
+public class RSEvent {
+	private long eventRemoteId;
+	private String categoryName;
+	private String eventArea;
+	private String eventCity;
+	private int eventCost;
+	private String eventLocation;
+	private String eventName;
+	private String eventOverview;
+	private String eventVenue;
+	private ArrayList<RSImage> eventImages;
+	private ArrayList<String> eventHashtags;
+	private ArrayList<RSDatetime> eventDatetimes;
+	
+	public RSEvent(long eventRemoteId, String categoryName, String eventArea,
+			String eventCity, int eventCost, String eventLocation,
+			String eventName, String eventOverview, String eventVenue,
+			ArrayList<RSImage> eventImages, ArrayList<String> eventHashtags,
+			ArrayList<RSDatetime> eventDatetimes) {
+		super();
+		this.eventRemoteId = eventRemoteId;
+		this.categoryName = categoryName;
+		this.eventArea = eventArea;
+		this.eventCity = eventCity;
+		this.eventCost = eventCost;
+		this.eventLocation = eventLocation;
+		this.eventName = eventName;
+		this.eventOverview = eventOverview;
+		this.eventVenue = eventVenue;
+		this.eventImages = eventImages;
+		this.eventHashtags = eventHashtags;
+		this.eventDatetimes = eventDatetimes;
+	}
+
+	public long getEventRemoteId() {
+		return eventRemoteId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public String getEventArea() {
+		return eventArea;
+	}
+
+	public String getEventCity() {
+		return eventCity;
+	}
+
+	public int getEventCost() {
+		return eventCost;
+	}
+
+	public String getEventLocation() {
+		return eventLocation;
+	}
+
+	public String getEventName() {
+		return eventName;
+	}
+
+	public String getEventOverview() {
+		return eventOverview;
+	}
+
+	public String getEventVenue() {
+		return eventVenue;
+	}
+
+	public ArrayList<RSImage> getEventImages() {
+		return eventImages;
+	}
+
+	public ArrayList<String> getEventHashtags() {
+		return eventHashtags;
+	}
+
+	public ArrayList<RSDatetime> getEventDatetimes() {
+		return eventDatetimes;
+	}
+
+	public void setEventRemoteId(long eventRemoteId) {
+		this.eventRemoteId = eventRemoteId;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public void setEventArea(String eventArea) {
+		this.eventArea = eventArea;
+	}
+
+	public void setEventCity(String eventCity) {
+		this.eventCity = eventCity;
+	}
+
+	public void setEventCost(int eventCost) {
+		this.eventCost = eventCost;
+	}
+
+	public void setEventLocation(String eventLocation) {
+		this.eventLocation = eventLocation;
+	}
+
+	public void setEventName(String eventName) {
+		this.eventName = eventName;
+	}
+
+	public void setEventOverview(String eventOverview) {
+		this.eventOverview = eventOverview;
+	}
+
+	public void setEventVenue(String eventVenue) {
+		this.eventVenue = eventVenue;
+	}
+
+	public void setEventImages(ArrayList<RSImage> eventImages) {
+		this.eventImages = eventImages;
+	}
+
+	public void setEventHashtags(ArrayList<String> eventHashtags) {
+		this.eventHashtags = eventHashtags;
+	}
+
+	public void setEventDatetimes(ArrayList<RSDatetime> eventDatetimes) {
+		this.eventDatetimes = eventDatetimes;
+	}
+}
